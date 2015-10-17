@@ -1,193 +1,75 @@
+<!DOCTYPE html>
 <html>
 
+
 <head>
+<style>
+table, th, td {
+    border: 2px solid black;
+    border-collapse: collapse;
+}
 
-    <title>Pie Chart</title>
+th{
+    padding: 0px;
+    text-align: center;   
 
-    <script type="text/javascript">
 
-        var can, ctx,
+}
 
-            numSamples,
+input{
+  border  : 0;
+  padding : 0px;
+  margin  : 20;
+  width   : 60px;
 
-            xScalar, yScalar,
+  background: none;
+}
 
-            radius, quarter;
 
-        // data sets -- set literally or obtain from an ajax call
-
-        var dataName = [ "East", "Midwest", "South", "West" ];
-
-        var q1Value = [ 1200000, 800000, 600000, 3000000 ];
-
-        var q2Value = [ 900000, 900000, 700000, 1800000 ];
-
-        var q3Value = [ 800000, 700000, 600000, 900000 ];
-
-        var fillColor = ["red", "blue", "green", "orange" ];
-
- 
-
-        function init() {
-
-            // set this value for your data
-
-            numSamples = 4;
-
-            can = document.getElementById("can");
-
-            quarter = document.getElementById("quarter");
-
-            ctx = can.getContext("2d");
-
-            drawPie();
-
-        }
-
- 
-
-        function drawPie() {
-
-            radius = can.height / 3;
-
-            var midX = can.width / 2;
-
-            var midY = can.height / 2;
-
-            ctx.strokeStyle = "black";
-
-            ctx.font = "18pt Helvetica";
-
-            ctx.textAlign = "center";
-
-            ctx.textBaseline = "middle";
-
-            // get data set
-
-            var dataValue = q1Value;
-
-            if (quarter.value == "q2")
-
-                dataValue = q2Value;
-
-            if (quarter.value == "q3")
-
-                dataValue = q3Value;
-
-            // calculate total value of pie
-
-            var total = 0;
-
-            for (var i = 0; i < numSamples; i++) {
-
-                total += dataValue[i];
-
-            }
-
-            // get ready to draw
-
-            ctx.clearRect(0, 0, can.width, can.height);
-
-            var oldAngle = 0;
-
- 
-
-            // for each sample
-
-            for (var i = 0; i < numSamples; i++) {
-
-                // draw wedge
-
-                var portion = dataValue[i] / total;
-
-                var wedge = 2 * Math.PI * portion;
-
-                ctx.beginPath();
-
-                var angle = oldAngle + wedge;
-
-                ctx.arc(midX, midY, radius, oldAngle, angle);
-
-                ctx.lineTo(midX, midY);
-
-                ctx.closePath();
-
-                ctx.fillStyle = fillColor[i];
-
-                ctx.fill();    // fill with wedge color
-
-                ctx.stroke();  // outline in black
-
- 
-
-                // print label
-
-                // set angle to middle of wedge
-
-                var labAngle = oldAngle + wedge / 2;
-
-                // set x, y for label outside center of wedge
-
-                // adjust for fact text is wider than it is tall
-
-                var labX = midX + Math.cos(labAngle) * radius * 1.5;
-
-                var labY = midY + Math.sin(labAngle) * radius * 1.3 - 12;
-
-                // print name and value with black shadow
-
-                ctx.save();
-
-                ctx.shadowColor = "black";
-
-                ctx.shadowOffsetX = 1;
-
-                ctx.shadowOffsetY = -1;
-
-                ctx.fillStyle = fillColor[i];
-
-                ctx.fillText(dataName[i], labX, labY);
-
-                ctx.fillText("$" + dataValue[i], labX, labY + 25);
-
-                ctx.restore();
-
-                // update beginning angle for next wedge
-
-                oldAngle += wedge;
-
-            }
-
-        }
-
-    </script>
-
+</style>
 </head>
 
-<body onload="init()">
 
-    <div align="center">
+<body>
 
-        <h2>Sales by Region</h2>
+<table style="width:25%">
+  <tr>
+    <th rowspan="3"><input id="Name" name="Names" value="Names" type="text"></th>
+    <th colspan="3">date</th>
+  </tr>
 
-        <canvas id="can" height="400" width="500">
+ <tr>
+ </tr>
 
-        </canvas>
+ <tr>
+  <td><input id="row-1-age" name="Colume A" value="1 Octobr" type="text"></td>
+  <td><input id="row-1-age" name="Colume B" value="2 Octobr" type="text"></td>
+  <td><input id="row-1-age" name="Colume C" value="3 Octobr" type="text"></td>
+ </tr>
 
-    </div>
+ <tr>
+  <td><input id="1" name="1" value="Hesham" type="text"></td>
+  <td><input id="Colume A1" name="Colume A1" value="10" type="text"></td>
+  <td><input id="Colume B1" name="Colume B1" value="20" type="text"></td>
+  <td><input id="Colume C1" name="Colume C1" value="30" type="text"></td>
+ </tr>
 
-    <br />
+ <tr>
+  <td><input id="2" name="2" value="Walaa" type="text"></td>
+  <td><input id="Colume A2" name="Colume A2" value="10" type="text"></td>
+  <td><input id="Colume B2" name="Colume B2" value="20" type="text"></td>
+  <td><input id="Colume C2" name="Colume C2" value="30" type="text"></td>
+ </tr>
 
-    <select id="quarter" onchange="drawPie()" style="font:18pt Helvetica">
+ <tr>
+  <td><input id="3" name="3" value="Mohamed" type="text"></td>
+  <td><input id="Colume A3" name="Colume A3" value="10" type="text"></td>
+  <td><input id="Colume B3" name="Colume B3" value="20" type="text"></td>
+  <td><input id="Colume C3" name="Colume C3" value="30" type="text"></td>
+ </tr>
 
-        <option value="q1">Q1</option>
 
-        <option value="q2">Q2</option>
-
-        <option value="q3">Q3</option>
-
-    </select>
+</table>
 
 </body>
-
 </html>
