@@ -1,92 +1,193 @@
-<!DOCTYPE html>
 <html>
-<body>
 
-<canvas id="canvas" width="400" height="400"
-style="background-color:#333">
-</canvas>
+<head>
 
-<script>
-var canvas = document.getElementById("canvas");
-var ctx = canvas.getContext("2d");
-var radius = canvas.height / 2;
-ctx.translate(radius, radius);
-radius = radius * 0.90
-setInterval(drawClock, 1000);
+    <title>Pie Chart</title>
 
-function drawClock() {
-  drawFace(ctx, radius);
-  drawNumbers(ctx, radius);
-  drawTime(ctx, radius);
-}
+    <script type="text/javascript">
 
-function drawFace(ctx, radius) {
-  var grad;
-  ctx.beginPath();
-  ctx.arc(0, 0, radius, 0, 2*Math.PI);
-  ctx.fillStyle = 'white';
-  ctx.fill();
-  grad = ctx.createRadialGradient(0,0,radius*0.95, 0,0,radius*1.05);
-  grad.addColorStop(0, '#333');
-  grad.addColorStop(0.5, 'white');
-  grad.addColorStop(1, '#333');
-  ctx.strokeStyle = grad;
-  ctx.lineWidth = radius*0.1;
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.arc(0, 0, radius*0.1, 0, 2*Math.PI);
-  ctx.fillStyle = '#333';
-  ctx.fill();
-}
+        var can, ctx,
 
-function drawNumbers(ctx, radius) {
-  var ang;
-  var num;
-  ctx.font = radius*0.15 + "px arial";
-  ctx.textBaseline="middle";
-  ctx.textAlign="center";
-  for(num = 1; num < 13; num++){
-    ang = num * Math.PI / 6;
-    ctx.rotate(ang);
-    ctx.translate(0, -radius*0.85);
-    ctx.rotate(-ang);
-    ctx.fillText(num.toString(), 0, 0);
-    ctx.rotate(ang);
-    ctx.translate(0, radius*0.85);
-    ctx.rotate(-ang);
-  }
-}
+            numSamples,
 
-function drawTime(ctx, radius){
-    var now = new Date();
-    var hour = now.getHours();
-    var minute = now.getMinutes();
-    var second = now.getSeconds();
-    //hour
-    hour=hour%12;
-    hour=(hour*Math.PI/6)+
-    (minute*Math.PI/(6*60))+
-    (second*Math.PI/(360*60));
-    drawHand(ctx, hour, radius*0.5, radius*0.07);
-    //minute
-    minute=(minute*Math.PI/30)+(second*Math.PI/(30*60));
-    drawHand(ctx, minute, radius*0.8, radius*0.07);
-    // second
-    second=(second*Math.PI/30);
-    drawHand(ctx, second, radius*0.9, radius*0.02);
-}
+            xScalar, yScalar,
 
-function drawHand(ctx, pos, length, width) {
-    ctx.beginPath();
-    ctx.lineWidth = width;
-    ctx.lineCap = "round";
-    ctx.moveTo(0,0);
-    ctx.rotate(pos);
-    ctx.lineTo(0, -length);
-    ctx.stroke();
-    ctx.rotate(-pos);
-}
-</script>
+            radius, quarter;
+
+        // data sets -- set literally or obtain from an ajax call
+
+        var dataName = [ "East", "Midwest", "South", "West" ];
+
+        var q1Value = [ 1200000, 800000, 600000, 3000000 ];
+
+        var q2Value = [ 900000, 900000, 700000, 1800000 ];
+
+        var q3Value = [ 800000, 700000, 600000, 900000 ];
+
+        var fillColor = ["red", "blue", "green", "orange" ];
+
+ 
+
+        function init() {
+
+            // set this value for your data
+
+            numSamples = 4;
+
+            can = document.getElementById("can");
+
+            quarter = document.getElementById("quarter");
+
+            ctx = can.getContext("2d");
+
+            drawPie();
+
+        }
+
+ 
+
+        function drawPie() {
+
+            radius = can.height / 3;
+
+            var midX = can.width / 2;
+
+            var midY = can.height / 2;
+
+            ctx.strokeStyle = "black";
+
+            ctx.font = "18pt Helvetica";
+
+            ctx.textAlign = "center";
+
+            ctx.textBaseline = "middle";
+
+            // get data set
+
+            var dataValue = q1Value;
+
+            if (quarter.value == "q2")
+
+                dataValue = q2Value;
+
+            if (quarter.value == "q3")
+
+                dataValue = q3Value;
+
+            // calculate total value of pie
+
+            var total = 0;
+
+            for (var i = 0; i < numSamples; i++) {
+
+                total += dataValue[i];
+
+            }
+
+            // get ready to draw
+
+            ctx.clearRect(0, 0, can.width, can.height);
+
+            var oldAngle = 0;
+
+ 
+
+            // for each sample
+
+            for (var i = 0; i < numSamples; i++) {
+
+                // draw wedge
+
+                var portion = dataValue[i] / total;
+
+                var wedge = 2 * Math.PI * portion;
+
+                ctx.beginPath();
+
+                var angle = oldAngle + wedge;
+
+                ctx.arc(midX, midY, radius, oldAngle, angle);
+
+                ctx.lineTo(midX, midY);
+
+                ctx.closePath();
+
+                ctx.fillStyle = fillColor[i];
+
+                ctx.fill();    // fill with wedge color
+
+                ctx.stroke();  // outline in black
+
+ 
+
+                // print label
+
+                // set angle to middle of wedge
+
+                var labAngle = oldAngle + wedge / 2;
+
+                // set x, y for label outside center of wedge
+
+                // adjust for fact text is wider than it is tall
+
+                var labX = midX + Math.cos(labAngle) * radius * 1.5;
+
+                var labY = midY + Math.sin(labAngle) * radius * 1.3 - 12;
+
+                // print name and value with black shadow
+
+                ctx.save();
+
+                ctx.shadowColor = "black";
+
+                ctx.shadowOffsetX = 1;
+
+                ctx.shadowOffsetY = -1;
+
+                ctx.fillStyle = fillColor[i];
+
+                ctx.fillText(dataName[i], labX, labY);
+
+                ctx.fillText("$" + dataValue[i], labX, labY + 25);
+
+                ctx.restore();
+
+                // update beginning angle for next wedge
+
+                oldAngle += wedge;
+
+            }
+
+        }
+
+    </script>
+
+</head>
+
+<body onload="init()">
+
+    <div align="center">
+
+        <h2>Sales by Region</h2>
+
+        <canvas id="can" height="400" width="500">
+
+        </canvas>
+
+    </div>
+
+    <br />
+
+    <select id="quarter" onchange="drawPie()" style="font:18pt Helvetica">
+
+        <option value="q1">Q1</option>
+
+        <option value="q2">Q2</option>
+
+        <option value="q3">Q3</option>
+
+    </select>
 
 </body>
+
 </html>
